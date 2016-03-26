@@ -185,6 +185,8 @@ class addButtonsInObjectMode(bpy.types.Panel):
 		
 		layout.prop(context.scene, "r_hide_after_renaming", text="Hide After Renaming")
 
+		layout.prop(context.scene, "r_also_rename_datablock", text="Also Rename Datablock")
+
 def register():
 
 	bpy.utils.register_module(__name__)
