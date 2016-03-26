@@ -90,7 +90,7 @@ class BakingNamepair(bpy.types.Operator):
 					
 					low_poly.name = id_generator()
 
-					if self.r_also_rename_datablock:
+					if bpy.context.scene.r_also_rename_datablock:
 						low_poly.data.name = low_poly.name
 
 				else:
@@ -117,12 +117,12 @@ class BakingNamepair(bpy.types.Operator):
 
 					high_poly.name = low_poly.name + "_high"
 
-					if self.r_also_rename_datablock:
-						high_poly.data.name = low_poly.name
+					if bpy.context.scene.r_also_rename_datablock:
+						high_poly.data.name = high_poly.name
 
 					low_poly.name = low_poly.name + "_low"
 
-					if self.r_also_rename_datablock:
+					if bpy.context.scene.r_also_rename_datablock:
 						low_poly.data.name = low_poly.name
 
 					#Hide, if option toggled.
@@ -137,7 +137,7 @@ class BakingNamepair(bpy.types.Operator):
 
 					low_poly.name = low_poly.name + "_low"
 
-					if self.r_also_rename_datablock:
+					if bpy.context.scene.r_also_rename_datablock:
 						low_poly.data.name = low_poly.name
 
 					#Hide, if option toggled.
