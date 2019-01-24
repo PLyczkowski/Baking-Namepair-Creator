@@ -160,7 +160,7 @@ class BakingNamepair(bpy.types.Operator):
 class addButtonsInObjectMode(bpy.types.Panel):
 	bl_idname = "RELATIONS_PT_baking_namepair_objectmode"
 	bl_space_type = 'VIEW_3D'
-	bl_region_type = 'TOOLS'
+	bl_region_type = 'UI'
 
 	bl_label = "Baking Namepair"
 	bl_context = "objectmode"
