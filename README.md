@@ -19,3 +19,8 @@ Also Rename Datablock will also rename the mesh data.
 
 In 2.8 there are extra options:
 There are also buttons that allow to batch-show/batch-hide all of the renamed objects by groups: only-high/only-low/all renamed.
+
+Installation:
+Edit=>Preferences=>Add-ons=>Install
+Choose the correct *.py for your version of blender(2.8 or 2.79)
+Enjoy.
