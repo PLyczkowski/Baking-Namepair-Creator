@@ -120,8 +120,8 @@ class BakingNamepair(bpy.types.Operator):
 					#Hide, if option toggled.
 
 					if bpy.context.scene.r_hide_after_renaming:
-						
-						bpy.ops.object.hide_view_set(unselected=False)
+						selected[0].hide_viewport = True
+						selected[1].hide_viewport = True
 
 				elif low_poly_check == None and high_poly.name == low_poly.name + "_high":
 
@@ -135,10 +135,11 @@ class BakingNamepair(bpy.types.Operator):
 					#Hide, if option toggled.
 
 					if bpy.context.scene.r_hide_after_renaming:
-
-						bpy.ops.object.hide_view_set(unselected=False)
+						selected[0].hide_viewport = True
+						selected[1].hide_viewport = True
 
 				else:
+
 
 					#Low poly name occupied.
 
@@ -157,6 +158,39 @@ class BakingNamepair(bpy.types.Operator):
 
 		return {'FINISHED'}
 
+class OpToggleRenamed(bpy.types.Operator):
+	bl_idname = "object.toggle_viewport_renamed_objects"
+	bl_label = "Hide(/Unhide) all renamed High/Low poly objects"
+	bl_description = "Hide/Unhide all renamed High/Low poly objects in selected collections"
+	bl_options = {'INTERNAL', 'UNDO'}
+
+	group : bpy.props.EnumProperty(items = {
+		('HIGH', "High polys", "High"),
+		('LOW', "Low polys", "Low"),
+		('ALL', "All renamed", "All"),
+	})
+	action : bpy.props.EnumProperty(items = {
+		('SHOW', "Show", "Show"),
+		('HIDE', "Hide", "Hide")
+	})
+
+	def execute(self, context):
+		if self.group == 'HIGH':
+			suffixes = "_high"
+		elif self.group == 'LOW':
+			suffixes = "_low"
+		else:
+			suffixes = ("_low", "_high")
+
+		for obj in bpy.data.objects:
+			if not obj.name.endswith(suffixes):
+				continue
+			if self.action == 'SHOW':
+				obj.hide_viewport = False
+			else:
+				obj.hide_viewport = True
+		return {'FINISHED'}
+
 class addButtonsInObjectMode(bpy.types.Panel):
 	bl_idname = "RELATIONS_PT_baking_namepair_objectmode"
 	bl_space_type = 'VIEW_3D'
@@ -168,15 +202,28 @@ class addButtonsInObjectMode(bpy.types.Panel):
 	def draw(self, context):
 		layout = self.layout
 
-		col = layout.column(align=True)
+		# col = layout.column(align=True)
 
-		col.operator("object.baking_namepair", text="Create Baking Namepair")
+		layout.operator("object.baking_namepair", text="Create Baking Namepair")
 
 		layout.prop(context.scene, "r_generate_random_name", text="Generate Random Name")
-		
 		layout.prop(context.scene, "r_hide_after_renaming", text="Hide After Renaming")
-
 		layout.prop(context.scene, "r_also_rename_datablock", text="Also Rename Datablock")
+
+		self._draw_toggle_viewport(context, 'HIGH', layout)
+		self._draw_toggle_viewport(context, 'LOW', layout)
+		self._draw_toggle_viewport(context, 'ALL', layout)
+	
+	def _draw_toggle_viewport(self, context, group, layout):
+		row = layout.row()
+		row.label(text=group.lower())
+		op = row.operator("object.toggle_viewport_renamed_objects", text="SHOW")
+		op.group = group
+		op.action = 'SHOW'
+		op = row.operator("object.toggle_viewport_renamed_objects", text="HIDE")
+		op.group = group
+		op.action = 'HIDE'
+		
 
 def register():
 	bpy.types.Scene.r_generate_random_name = bpy.props.BoolProperty(default= False)
@@ -184,10 +231,12 @@ def register():
 	bpy.types.Scene.r_also_rename_datablock = bpy.props.BoolProperty(default= True)
 
 	bpy.utils.register_class(BakingNamepair)
+	bpy.utils.register_class(OpToggleRenamed)
 	bpy.utils.register_class(addButtonsInObjectMode)
 
 def unregister():
 	bpy.utils.unregister_class(BakingNamepair)
+	bpy.utils.unregister_class(OpToggleRenamed)
 	bpy.utils.unregister_class(addButtonsInObjectMode)
 
 if __name__ == "__main__":
