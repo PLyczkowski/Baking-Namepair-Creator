@@ -19,31 +19,28 @@
 # Select the lowpoly and highpoly objects, and press the Create Baking Namepair button in the Relations tab. The suffixes _high and _low are added automatically based on the vertex count. The name of the low poly object is used as the new name's base.
 
 bl_info = {
-'name': "Baking Namepair Creator",
-'author': "Paweł Łyczkowski",
-'version': (1, 0, 2),
-'blender': (2, 7, 4),
-'api': 41270,
-'location': "View3D > Toolbar > Relations Tab",
-'warning': "",
-'description': "Set's up a baking namepair.",
-'wiki_url': "",
-'tracker_url': "",
-'category': 'Object'}
+	'name': "Baking Namepair Creator",
+	'author': "Paweł Łyczkowski",
+	'version': (1, 0, 3),
+	'blender': (2, 80, 0),
+	'location': "View3D > Toolbar > Relations Tab",
+	'description': "Set's up a baking namepair.",
+	'warning': "",
+	'wiki_url': "",
+	'tracker_url': "",
+	'category': 'Object'
+}
 
-import bpy,bmesh
+import bpy, bmesh
 import string
 import random
-
-bpy.types.Scene.r_generate_random_name = bpy.props.BoolProperty(default= False)
-bpy.types.Scene.r_hide_after_renaming = bpy.props.BoolProperty(default= False)
-bpy.types.Scene.r_also_rename_datablock = bpy.props.BoolProperty(default= True)
 
 class BakingNamepair(bpy.types.Operator):
 	'''Tooltip'''
 	bl_description = "BakingNamepair"
 	bl_idname = "object.baking_namepair"
 	bl_label = "BakingNamepair"
+	bl_options = { 'REGISTER', 'UNDO'}
 
 	@classmethod
 	def poll(cls, context):
@@ -52,7 +49,7 @@ class BakingNamepair(bpy.types.Operator):
 	def execute(self, context):
 		
 		selected = bpy.context.selected_objects
-		scene = bpy.context.scene
+		depsgraph = context.depsgraph
 
 		high_poly = None
 		low_poly = None
@@ -63,11 +60,11 @@ class BakingNamepair(bpy.types.Operator):
 		if len(selected) == 2:
 
 			tempmesh1 = bmesh.new()
-			tempmesh1.from_object(selected[0], scene, deform=True, render=False, cage=False, face_normals=True)
+			tempmesh1.from_object(selected[0], depsgraph, deform=True, cage=False, face_normals=True)
 			vertex_count1 = len(tempmesh1.verts)
 
 			tempmesh2 = bmesh.new()
-			tempmesh2.from_object(selected[1], scene, deform=True, render=False, cage=False, face_normals=True)
+			tempmesh2.from_object(selected[1], depsgraph, deform=True, cage=False, face_normals=True)
 			vertex_count2 = len(tempmesh2.verts)
 
 			if vertex_count1 != vertex_count2:
@@ -75,21 +72,16 @@ class BakingNamepair(bpy.types.Operator):
 				#The meshes are not the same, set up which is which.
 
 				if vertex_count1 > vertex_count2:
-
 					high_poly = selected[0]
 					low_poly= selected[1]
-
 				else:
-
 					high_poly = selected[1]
 					low_poly= selected[0]
 
 				#Set up a random name, if option toggled.
 
 				if bpy.context.scene.r_generate_random_name:
-					
 					low_poly.name = id_generator()
-
 					if bpy.context.scene.r_also_rename_datablock:
 						low_poly.data.name = low_poly.name
 
@@ -166,10 +158,9 @@ class BakingNamepair(bpy.types.Operator):
 		return {'FINISHED'}
 
 class addButtonsInObjectMode(bpy.types.Panel):
-	bl_idname = "baking_namepair_objectmode"
+	bl_idname = "RELATIONS_PT_baking_namepair_objectmode"
 	bl_space_type = 'VIEW_3D'
 	bl_region_type = 'TOOLS'
-	bl_category = "Relations"
 
 	bl_label = "Baking Namepair"
 	bl_context = "objectmode"
@@ -188,12 +179,16 @@ class addButtonsInObjectMode(bpy.types.Panel):
 		layout.prop(context.scene, "r_also_rename_datablock", text="Also Rename Datablock")
 
 def register():
+	bpy.types.Scene.r_generate_random_name = bpy.props.BoolProperty(default= False)
+	bpy.types.Scene.r_hide_after_renaming = bpy.props.BoolProperty(default= False)
+	bpy.types.Scene.r_also_rename_datablock = bpy.props.BoolProperty(default= True)
 
-	bpy.utils.register_module(__name__)
+	bpy.utils.register_class(BakingNamepair)
+	bpy.utils.register_class(addButtonsInObjectMode)
 
 def unregister():
-
-	bpy.utils.unregister_module(__name__)
+	bpy.utils.unregister_class(BakingNamepair)
+	bpy.utils.unregister_class(addButtonsInObjectMode)
 
 if __name__ == "__main__":
-		register()
+	register()
