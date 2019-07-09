@@ -32,6 +32,7 @@ bl_info = {
 }
 
 import bpy, bmesh
+from bpy.types import Operator
 import string
 import random
 
@@ -49,7 +50,7 @@ class BakingNamepair(bpy.types.Operator):
 	def execute(self, context):
 		
 		selected = bpy.context.selected_objects
-		depsgraph = context.depsgraph
+		depsgraph = bpy.context.evaluated_depsgraph_get()
 
 		high_poly = None
 		low_poly = None
