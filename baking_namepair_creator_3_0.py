@@ -201,6 +201,7 @@ class addButtonsInObjectMode(bpy.types.Panel):
 
     bl_label = "Baking Namepair"
     bl_context = "objectmode"
+    bl_category = "Bake"
 
     def draw(self, context):
         layout = self.layout
