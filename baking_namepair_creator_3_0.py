@@ -63,11 +63,11 @@ class BakingNamepair(bpy.types.Operator):
         if len(selected) == 2:
 
             tempmesh1 = bmesh.new()
-            tempmesh1.from_object(selected[0], depsgraph, cage=False, face_normals=True)
+            tempmesh1.from_object(selected[0], depsgraph)
             vertex_count1 = len(tempmesh1.verts)
 
             tempmesh2 = bmesh.new()
-            tempmesh2.from_object(selected[1], depsgraph, cage=False, face_normals=True)
+            tempmesh2.from_object(selected[1], depsgraph)
             vertex_count2 = len(tempmesh2.verts)
 
             if vertex_count1 != vertex_count2:
