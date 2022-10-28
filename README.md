@@ -2,7 +2,7 @@
 This addon set's a namepair (for example: "body_low" and "body_high"), to use with baking software, like Substance Painter/Designer, with one click.
 
 To use:
-Select the low poly and high poly objects, and press the Create Baking Namepair button in the Relations tab. The suffixes _high and _low are added automatically based on the vertex count. The name of the low poly object is used as the new name's base.
+Divide you lowpoly and highpoly into matching parts (for instance using Separate > To Loose Parts). Select the low poly and high poly objects, and press the Create Baking Namepair button in the Relations tab. The suffixes _high and _low are added automatically based on the vertex count. The name of the low poly object is used as the new name's base.
 
 The addon will display an error message if it finds any problems.
 
